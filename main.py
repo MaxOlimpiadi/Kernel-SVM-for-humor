@@ -13,16 +13,20 @@ from sklearn.svm import SVC
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 
 
-FILE_PATH = "dataset.csv"
 
-df = pd.read_csv(FILE_PATH)
+
+#TODO: не забыить про сохранение модели!! через joblib
+
+FILE_PATH = "kaggle_dataset.xlsx"
+
+df = pd.read_excel(FILE_PATH)
 
 print(df.head())
-print(df["humor"].unique())
+print(df["label"].unique())
 
 X = df["text"].astype(str)
 
-y = df["humor"].astype(int)
+y = df["label"].astype(int)
 
 
 
