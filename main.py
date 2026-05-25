@@ -11,22 +11,22 @@ from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import SVC
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
-
+import joblib
 
 
 
 #TODO: не забыить про сохранение модели!! через joblib
 
-FILE_PATH = "kaggle_dataset.xlsx"
+FILE_PATH = "dataset.csv"
 
-df = pd.read_excel(FILE_PATH)
+df = pd.read_csv(FILE_PATH)
 
 print(df.head())
-print(df["label"].unique())
+print(df["humor"].unique())
 
 X = df["text"].astype(str)
 
-y = df["label"].astype(int)
+y = df["humor"].astype(int)
 
 
 
@@ -45,8 +45,10 @@ model = Pipeline([
         "vectorizer",
         TfidfVectorizer(
             lowercase=True,
-            stop_words="english",
-            max_features=5000
+            stop_words = "english",
+            ngram_range = (1,2),
+            max_features = 10000,
+            sublinear_tf = True
         )
     ),
     (
@@ -62,6 +64,12 @@ model = Pipeline([
 
 # Training the model (applying the pipline):
 model.fit(X_train, y_train)
+
+# Saving the model
+joblib.dump(
+    model,
+    "kernel_svm_humor.pkl"
+)
 
 # Predticions:
 y_pred = model.predict(X_test)
