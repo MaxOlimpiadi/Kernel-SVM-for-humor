@@ -39,64 +39,80 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 
-# Prepearing TF-IDF + Kernel SVM pipline:
-model = Pipeline([
-    (
-        "vectorizer",
-        TfidfVectorizer(
-            lowercase=True,
-            stop_words = "english",
-            ngram_range = (1,2),
-            max_features = 10000,
-            sublinear_tf = True
-        )
-    ),
-    (
-        "method",
-        SVC(
-            kernel="rbf",   
-            C=1.0,
-            gamma="scale"
-        )
-    )
-])
+
+# #----------------TRAINING------------------------------------------------------
+
+# # Prepearing TF-IDF + Kernel SVM pipline:
+# model = Pipeline([
+#     (
+#         "vectorizer",
+#         TfidfVectorizer(
+#             lowercase=True,
+#             stop_words = "english",
+#             ngram_range = (1,2),
+#             max_features = 10000,
+#             sublinear_tf = True
+#         )
+#     ),
+#     (
+#         "method",
+#         SVC(
+#             kernel="rbf",   
+#             C=1.0,
+#             gamma="scale"
+#         )
+#     )
+# ])
 
 
-# Training the model (applying the pipline):
-model.fit(X_train, y_train)
+# # Training the model (applying the pipline):
+# model.fit(X_train, y_train)
 
-# Saving the model
-joblib.dump(
-    model,
-    "kernel_svm_humor.pkl"
-)
+# # Saving the model
+# joblib.dump(
+#     model,
+#     "kernel_svm_humor.pkl"
+# )
+
+# #-----------------------------------------------------------------------------
+
+df_new = pd.read_excel('kaggle_dataset.xlsx') # for testing
+X_test_new = df_new['text'].astype(str)
+Y_test_new = df_new['label']
+
+
+
+
+
+model = joblib.load("kernel_svm_humor.pkl")
+
 
 # Predticions:
-y_pred = model.predict(X_test)
+y_pred = model.predict(X_test_new)
 
 
 # Evaluating:
 print("\nAccuracy:")
-print(accuracy_score(y_test, y_pred))
+print(accuracy_score(Y_test_new, y_pred))
 
 print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
+print(classification_report(Y_test_new, y_pred))
 
 print("\nConfusion Matrix:")
-print(confusion_matrix(y_test, y_pred))
+print(confusion_matrix(Y_test_new, y_pred))
 
 
 
-# Testing on other arbitary texts:
-examples = [
-    "I told my computer I needed a break, and it froze.",
-    "The weather is warm today."
-]
+# # Testing on other arbitary texts:
+# examples = [
+#     "I told my computer I needed a break, and it froze.",
+#     "The weather is warm today."
+# ]
 
-predictions = model.predict(examples)
+# predictions = model.predict(examples)
 
-print("\nCustom predictions:")
+# print("\nCustom predictions:")
 
-for text, pred in zip(examples, predictions):
-    label = "HUMOR" if pred == 1 else "NOT HUMOR"
-    print(f"{text} --> {label}")
+# for text, pred in zip(examples, predictions):
+#     label = "HUMOR" if pred == 1 else "NOT HUMOR"
+#     print(f"{text} --> {label}")
